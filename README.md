@@ -14,19 +14,17 @@ or passing parameters to the mariadb class.
 Usage
 -----
 
-* Sample usage
-
-  node mariadb inherits default {
-    class { "mariadb":
-       version => '5.5',
-       package => 'mariadb-server'
+    node mariadb inherits default {
+      class { "mariadb":
+         version => '5.5',
+         package => 'mariadb-server'
+      }
+      class { "mysql": 
+        root_password => 'test',
+        package => 'mariadb-server',
+        require => Class['mariadb']
+      } 
     }
-    class { "mysql": 
-      root_password => 'test',
-      package => 'mariadb-server',
-      require => Class['mariadb']
-    } 
-  }
 
 This example uses mysql puppet module from example42/mysql (http://github.com/example42/puppet-mysql/).
 
