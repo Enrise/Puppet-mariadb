@@ -11,8 +11,10 @@ You can use this module best by defining the following hiera values (replace 5.5
 
 or passing parameters to the mariadb class.
 
+Usage
+-----
 
-## Usage
+* Sample usage
 
   node mariadb inherits default {
     class { "mariadb":
