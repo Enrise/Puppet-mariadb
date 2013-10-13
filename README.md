@@ -19,7 +19,6 @@ or passing parameters to the mariadb class.
        version => '5.5',
        package => 'mariadb-server'
     }
-   
     class { "mysql": 
       root_password => 'test',
       package => 'mariadb-server',
