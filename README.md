@@ -12,21 +12,20 @@ You can use this module best by defining the following hiera values (replace 5.5
 or passing parameters to the mariadb class.
 
 
-Example
--------
+## Usage
 
-node mariadb inherits default {
-  class { "mariadb":
-     version => '5.5',
-     package => 'mariadb-server'
+  node mariadb inherits default {
+    class { "mariadb":
+       version => '5.5',
+       package => 'mariadb-server'
+    }
+
+    class { "mysql": 
+      root_password => 'test',
+      package => 'mariadb-server',
+      require => Class['mariadb']
+    } 
   }
-
-  class { "mysql": 
-    root_password => 'test',
-    package => 'mariadb-server',
-    require => Class['mariadb']
-  } 
-}
 
 This example uses mysql puppet module from example42/mysql (http://github.com/example42/puppet-mysql/).
 
