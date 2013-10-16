@@ -21,7 +21,7 @@ class mariadb (
     release     => $::lsbdistcodename,
     repos       => 'main',
     key         => 'dbart@askmonty.org',
-    key_source  => 'http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0xCBCB082A1BB943DB',
+    key_source  => 'http://keyserver.ubuntu.com:11371/pks/lookup?op=get\&search=0xCBCB082A1BB943DB',
  }
 
   exec {'mariadb_aptgetupdate':
