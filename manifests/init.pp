@@ -1,7 +1,6 @@
 class mariadb (
   # https://github.com/example42/puppi/issues/60
-  $version = hiera( 'mysql_version', '' ),
-  $package = hiera( 'mysql_package', '' )
+  $version = hiera( 'mysql_version', '' )
 ) {
 
   if ( ( $mariadb::version == '' ) or ( $mariadb::version == undef ) ) {
@@ -9,27 +8,29 @@ class mariadb (
   }
 
   $distro_lc  = inline_template("<%= operatingsystem.downcase %>")
-  $repo_version = inline_template('<%=@version.to_s.match(/\d+.\d+/)[0] %>')
-  $distro_url = "http://mirrors.supportex.net/mariadb/repo/${repo_version}/${distro_lc}"
+  $repo_version = inline_template('<%=@version.to_s.match(/\d+.\d+.\d+/)[0] %>')
+  $distro_url = "http://mirrors.supportex.net/mariadb/mariadb-${repo_version}/repo/${distro_lc}"
+  $mysql_package = hiera('mysql_package', $mysql::package)
 
   if ( ( $::operatingsystem != 'debian' ) and ( $::operatingsystem != 'ubuntu' ) ) {
     fail( "Distro ${::operatingsystem} not supported." )
   }
 
-  apt::source { "mariadb":
-    location    => $distro_url,
-    release     => $::lsbdistcodename,
-    repos       => 'main',
-    key         => 'dbart@askmonty.org',
-    key_source  => 'http://keyserver.ubuntu.com:11371/pks/lookup?op=get\&search=0xCBCB082A1BB943DB',
+  apt::repository { "mariadb":
+    url       => $distro_url,
+    distro    => $::lsbdistcodename,
+    repository=> 'main',
+    key       => 'dbart@askmonty.org',
+    key_url   => '"http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0xCBCB082A1BB943DB"',
  }
 
   exec {'mariadb_aptgetupdate':
-    command   => '/usr/bin/apt-get update',
-    onlyif    => "/bin/bash -c 'x=\$(apt-cache madison $mariadb::package | \
+    command   => 'apt-get update',
+    onlyif    => "/bin/bash -c 'x=\$(apt-cache madison $mysql_package | \
                   grep \"${distro_url}\" | wc -l); test \"\$x\" = \"0\" -a \"\$x\" != \"\" '"
   }
 
-  Apt::Source['mariadb'] -> Exec['mariadb_aptgetupdate'] -> Package['mysql']
+  Apt::Repository['mariadb'] -> Exec['mariadb_aptgetupdate'] -> Package['mysql']
+
 
 }
